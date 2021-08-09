@@ -12,7 +12,9 @@ Given two or more sets or lists as input, generate an UpSet plot. There are a fe
 2. Plot number of elements in each set in a bar chart.
 3. Create the little "circle and bar" things under the bar chart to indicate which intersection a given bar belongs to.
 4. Ideally, allow for secondary plots up above the bar plots. E.g. boxplot of some other variable.
-5. Need to be able to limit how many intersects get displayed as the number increases exponentially.
+5. Need to be able to limit how many intersects get displayed because the number increases exponentially. This could 
+be something like we show the top two or three intersections per sample, or only show intersections that are
+   significantly large (by some measure...).
 
 I think I can do this in two subplots (three (or more) if you count the secondary plot(s)). The subplots share an 
 x-axis, which represents all the different intersections. The top subplot is simply a bar chart. The bottom subplot 
