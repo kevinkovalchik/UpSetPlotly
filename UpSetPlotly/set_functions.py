@@ -51,3 +51,22 @@ def get_all_intersects(samples: Union[List[List], List[Set]], names: List[str] =
     out = [{'samples': intersect, 'elements': elements, 'n': len(elements)}
            for intersect, elements in zip(possible_intersects, intersects)]
     return out
+
+
+def order_sample_intersects(intersects: List[Dict], by: str = 'decreasing') -> List[Dict]:
+    """
+    Order the list of dictionaries returned by get_all_intersects.
+    :param intersects: A list of dictionaries returned by get_all_intersects
+    :param by: How to order the list. Must be one of {'name', 'increasing', 'decreasing'}.
+    :return:
+    """
+    if by == 'name':
+        # the return value from get_all_intersects is already in order by name, so for now we do nothing.
+        return intersects
+    if by == 'increasing':
+        intersects.sort(key=lambda x: x['n'])
+    elif by == 'decreasing':
+        intersects.sort(key=lambda x: x['n'], reverse=True)
+    else:
+        raise ValueError("'by' must be one of {'name', 'increasing', 'decreasing'}.")
+    return intersects
