@@ -8,7 +8,8 @@ def get_all_intersects(samples: Union[List[List], List[Set]], names: List[str] =
     converted to sets.
     :param samples: A list of lists or sets (the samples). These are the sets of elements which will be compared.
     :param names: Names for the respective samples. They must be unique. If None, sequential integers will be used.
-    :return: A list of dictionaries of form {'samples': [samples], 'elements': [elements unique to these samples]}
+    :return: A list of dictionaries of form {'samples': [samples], 'elements': [elements unique to these samples],
+    'n': [number of elements]}
     """
 
     if names:
@@ -47,5 +48,6 @@ def get_all_intersects(samples: Union[List[List], List[Set]], names: List[str] =
             intersect = intersect - sets[c_s]
         intersects[i] = intersect
 
-    out = [{'samples': intersect, 'elements': elements} for intersect, elements in zip(possible_intersects, intersects)]
+    out = [{'samples': intersect, 'elements': elements, 'n': len(elements)}
+           for intersect, elements in zip(possible_intersects, intersects)]
     return out
