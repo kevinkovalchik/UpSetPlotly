@@ -70,13 +70,14 @@ usp.add_secondary_plot(data=additional_data, label='Random stuff', plot_type='bo
 
 ![](.README_images/w_secondary_boxplot.png)
 
-We can also do violin or swarm plots, or all three.
+We can also do violin or swarm plots, or all three. Note that, annoyingly, we have to use html tags to create
+line breaks in the labels. This will keep them from colliding in this case.
 
 ```python
 usp = UpSetPlotly(samples, names)
-usp.add_secondary_plot(data=additional_data, label='Random stuff', plot_type='box')
-usp.add_secondary_plot(data=additional_data, label='Random stuff', plot_type='violin')
-usp.add_secondary_plot(data=additional_data, label='Random stuff', plot_type='swarm')
+usp.add_secondary_plot(data=additional_data, label='Random<br>stuff', plot_type='box')
+usp.add_secondary_plot(data=additional_data, label='Random<br>stuff', plot_type='violin')
+usp.add_secondary_plot(data=additional_data, label='Random<br>stuff', plot_type='swarm')
 usp.plot()
 ```
 
