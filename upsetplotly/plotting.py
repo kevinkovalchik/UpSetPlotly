@@ -1,7 +1,7 @@
 import plotly.graph_objs as go
 import plotly.subplots
 from typing import List, Dict, Tuple, Iterable, Optional
-from upsetplotly.set_functions import get_all_intersections
+from upsetplotly.set_functions import get_all_intersections, order_sample_intersections
 
 
 class UpSetPlotly:
@@ -16,7 +16,9 @@ class UpSetPlotly:
 
         self.samples = [set(x) for x in samples]
         self.sample_names = sample_names
+        self.sample_data = {sample: data for sample, data in zip(sample_names, samples)}
         self.intersections = get_all_intersections(self.samples, self.sample_names)
+        self.intersections = [x for x in self.intersections if x['n'] > 0]  # drop any empty intersections
         self.all_elements = set()
         self.all_elements.update(*self.samples)
         self.n_rows = 2
@@ -41,21 +43,74 @@ class UpSetPlotly:
         self.additional_data.append({'type': plot_type, 'data': data, 'label': label})
         self.n_rows += 1
 
-    def plot(self, show_fig: bool = True, return_fig: bool = False) -> Optional[go.Figure]:
+    def plot(self, show_fig: bool = True, return_fig: bool = False,
+             intersection_limit: str = None,
+             order_by: str = None) -> Optional[go.Figure]:
+        """
+        Create the UpSetPlot.
+        :param show_fig: Whether or not to show the figure.
+        :param return_fig: Whether or not to return the Figure object.
+        :param intersection_limit: A string indicating a limit on how small an intersection to plot. Must be of this
+        form: "by_sample [a float between 0 and 1]" or "by_total [a float between 0 and 1]". For example, if you
+        give "by_sample 0.05", then any intersection which is 5% or greater of any sample will be displayed. If you
+        were to give "by_total 0.05", then any intersection which is 5% or greater of the total number of unique
+        elements would be displayed.
+        :param order_by: If the intersections should be ordered according to size. Must be one of
+        {increasing, decreasing}
+        :return:
+        """
+        if order_by:
+            if order_by not in ['increasing', 'decreasing']:
+                raise ValueError('order_by must be one of {increasing, decreasing}')
+            intersections = order_sample_intersections(self.intersections, by=order_by)
+        else:
+            intersections = self.intersections
+
+        if intersection_limit:
+            cutoff = float(intersection_limit.split(' ')[1])
+            if intersection_limit.startswith('by_total'):
+                new_intersections = []
+                total = len(self.all_elements)
+
+                for intersect in intersections:
+                    if intersect['n'] / total >= cutoff:
+                        new_intersections.append(intersect)
+                intersections = new_intersections
+
+            elif intersection_limit.startswith('by_sample'):
+                new_intersections = []
+
+                for intersect in intersections:
+                    keep = False
+                    for sample in intersect['samples']:
+                        if intersect['n'] / len(self.sample_data[sample]) >= cutoff:
+                            keep = True
+                            break
+                    if keep:
+                        new_intersections.append(intersect)
+                intersections = new_intersections
+            else:
+                raise ValueError('intersection_limit must start with "by_total" or "by_sample". See docstring for '
+                                 'details.')
+
+            if len(intersections) == 0:
+                raise RuntimeError('After filtering by intersection size there is no data to plot. Refine the value '
+                                   'of "intersection_limit".')
+
         rows = 2 + len(self.additional_data)
         barplot_row = rows - 1
         intersection_row = rows
         self.fig = master_figure(n_samples=len(self.sample_names),
                                  rows=rows)
-        add_intersect_bar_subplot(self.fig, self.intersections, row=barplot_row)
+        add_intersect_bar_subplot(self.fig, intersections, row=barplot_row)
         add_rows_to_sample_table(self.fig, self.sample_names, row=intersection_row)
-        add_circles_and_bars(self.fig, self.intersections, self.sample_names, row=intersection_row)
+        add_circles_and_bars(self.fig, intersections, self.sample_names, row=intersection_row)
         for i in range(len(self.additional_data)):
             data = self.additional_data[i]
             add_additional_plot(self.fig,
                                 data=data['data'],
                                 label=data['label'],
-                                intersections=self.intersections,
+                                intersections=intersections,
                                 plot_type=data['type'],
                                 row=i+1)
         if show_fig:
