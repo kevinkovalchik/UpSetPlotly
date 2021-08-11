@@ -75,6 +75,7 @@ def master_figure(n_samples: int, rows: int = 2) -> go.Figure:
     row_heights += [2] * (rows - 2)
     row_heights.append(10)
     row_heights.append(1 * n_samples)
+    row_heights = [x/len(row_heights) for x in row_heights]
     fig = plotly.subplots.make_subplots(rows, 1, True, True, vertical_spacing=0.015,
                                         row_heights=row_heights)
     fig.update_xaxes(ticks='', row=rows, col=1, tickvals=[], ticktext=[])
@@ -288,4 +289,3 @@ def add_additional_plot(fig: go.Figure, data: dict, label: str, intersections: L
                                  jitter=0.3,
                                  pointpos=0),
                           row=row, col=col)
-        fig.add_shape(dict(type='rect', ))
