@@ -1,4 +1,4 @@
-from UpSetPlotly.set_functions import get_all_intersects, order_sample_intersects
+from UpSetPlotly.set_functions import get_all_intersections, order_sample_intersections
 
 
 def test_get_all_intersects_returns():
@@ -12,16 +12,16 @@ def test_get_all_intersects_returns():
                      {'samples': ('b', 'c'), 'elements': set(), 'n': 0},
                      {'samples': ('a', 'b', 'c'), 'elements': {2}, 'n': 1}]
 
-    returned = get_all_intersects([[1, 2, 3, 4], [2, 3, 4], [2, 5, 6]], names)
+    returned = get_all_intersections([[1, 2, 3, 4], [2, 3, 4], [2, 5, 6]], names)
     assert returned == should_return
 
-    returned = get_all_intersects([(1, 2, 3, 4), (2, 3, 4), (2, 5, 6)], names)
+    returned = get_all_intersections([(1, 2, 3, 4), (2, 3, 4), (2, 5, 6)], names)
     assert returned == should_return
 
-    returned = get_all_intersects([{1, 2, 3, 4}, {2, 3, 4}, {2, 5, 6}], names)
+    returned = get_all_intersections([{1, 2, 3, 4}, {2, 3, 4}, {2, 5, 6}], names)
     assert returned == should_return
 
-    returned = get_all_intersects([(1, 2, 3, 4), {2, 3, 4}, [2, 5, 6]], names)
+    returned = get_all_intersections([(1, 2, 3, 4), {2, 3, 4}, [2, 5, 6]], names)
     assert returned == should_return
 
 
@@ -33,7 +33,7 @@ def test_get_all_intersects_n():
     unique = set()
     for sample in samples:
         unique = unique | set(sample)
-    returned = get_all_intersects(samples)
+    returned = get_all_intersections(samples)
     n = 0
     for x in returned:
         n += x['n']
@@ -51,8 +51,8 @@ def test_order_sample_intersects_increasing():
     samples = [[1, 2, 3, 4], [2, 3, 4], [2, 5, 6]]
     names = ['a', 'b', 'c']
 
-    intersects = get_all_intersects(samples, names)
-    assert order_sample_intersects(intersects, 'increasing') == should_return
+    intersects = get_all_intersections(samples, names)
+    assert order_sample_intersections(intersects, 'increasing') == should_return
 
 
 def test_order_sample_intersects_decreasing():
@@ -66,5 +66,5 @@ def test_order_sample_intersects_decreasing():
     samples = [[1, 2, 3, 4], [2, 3, 4], [2, 5, 6]]
     names = ['a', 'b', 'c']
 
-    intersects = get_all_intersects(samples, names)
-    assert order_sample_intersects(intersects, 'decreasing') == order_sample_intersects(intersects) == should_return
+    intersects = get_all_intersections(samples, names)
+    assert order_sample_intersections(intersects, 'decreasing') == order_sample_intersections(intersects) == should_return
