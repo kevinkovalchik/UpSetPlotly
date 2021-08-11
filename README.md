@@ -31,7 +31,7 @@ Larger sets are okay too.
 import random
 
 names = [f'sample_{i}' for i in range(1, 6)]
-samples = [[''.join(random.choices('abcdefghijk', k=2)) for x in range(random.randint(1000, 3000))] for i in range(5)]
+samples = [[''.join(random.choices('abcdefghijk', k=3)) for x in range(random.randint(1000, 3000))] for i in range(5)]
 
 usp = UpSetPlotly(samples, names)
 usp.plot()
@@ -39,6 +39,7 @@ usp.plot()
 
 ![](.README_images/bigger_example.png)
 
+But there would soon be too many possible intersections to realistically visualize them all. 
 We can pass `intersection_limit='by_total 0.05'` to filter out any intersections which are smaller
 that 5% of the total number of unique elements. Any float between 0 and 1 is acceptable.
 
@@ -61,11 +62,24 @@ Additional data describing the elements can be passed to generate secondary plot
 UpSet plot.
 
 ```python
-import random
-
-all_elements = set().update([set(x) for x in samples])
+all_elements = set()
+all_elements.update(*[set(x) for x in samples])
 additional_data = {element: random.normalvariate(0, 1) for element in all_elements}
-usp.add_secondary_plot(data=additional_data, label='Random stuff', )
+usp.add_secondary_plot(data=additional_data, label='Random stuff', plot_type='box')
 ```
+
+![](.README_images/w_secondary_boxplot.png)
+
+We can also do violin or swarm plots, or all three.
+
+```python
+usp = UpSetPlotly(samples, names)
+usp.add_secondary_plot(data=additional_data, label='Random stuff', plot_type='box')
+usp.add_secondary_plot(data=additional_data, label='Random stuff', plot_type='violin')
+usp.add_secondary_plot(data=additional_data, label='Random stuff', plot_type='swarm')
+usp.plot()
+```
+
+![](.README_images/w_all_secondary_plots.png)
 
 See [dev_notes.md](./dev_notes.md) for plans and development progress.
