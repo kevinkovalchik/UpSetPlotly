@@ -339,8 +339,8 @@ def add_additional_plot(fig: go.Figure, data: dict, label: str, intersections: L
                                  y=data_to_plot,
                                  fillcolor='rgba(255,255,255,0)',
                                  line={'color': 'rgba(255,255,255,0)'},
-                                 marker={'color': '#565fdb'},
+                                 marker={'color': '#565fdb', 'size': 4},
                                  boxpoints='all',
-                                 jitter=0.3,
+                                 jitter=0.6,
                                  pointpos=0),
                           row=row, col=col)
