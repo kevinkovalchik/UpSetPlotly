@@ -2,7 +2,7 @@ from typing import List, Set, Union, Dict
 import itertools
 
 
-def get_all_intersects(samples: Union[List[List], List[Set]], names: List[str] = None) -> List[Dict]:
+def get_all_intersections(samples: Union[List[List], List[Set]], names: List[str] = None) -> List[Dict]:
     """
     Get the elements unique to all possible intersections of a list of lists or sets. Lists will automatically be
     converted to sets.
@@ -32,7 +32,7 @@ def get_all_intersects(samples: Union[List[List], List[Set]], names: List[str] =
     for intersect in possible_intersects:
         compliment_sets.append(tuple([x for x in names if x not in intersect]))  # as a tuple to be consistent
 
-    # and now get the actual intersects
+    # and now get the actual intersections
     intersects = []
     for intersect in possible_intersects:
         S = sets[intersect[0]]
@@ -53,7 +53,7 @@ def get_all_intersects(samples: Union[List[List], List[Set]], names: List[str] =
     return out
 
 
-def order_sample_intersects(intersects: List[Dict], by: str = 'decreasing') -> List[Dict]:
+def order_sample_intersections(intersects: List[Dict], by: str = 'decreasing') -> List[Dict]:
     """
     Order the list of dictionaries returned by get_all_intersects.
     :param intersects: A list of dictionaries returned by get_all_intersects
