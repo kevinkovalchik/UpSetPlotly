@@ -1,6 +1,6 @@
 import plotly.graph_objs as go
 import plotly.subplots
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Iterable
 
 
 def master_figure() -> go.Figure:
@@ -40,10 +40,16 @@ def get_row_locations(n: int) -> List[Tuple[float, float]]:
 def add_rows_to_sample_table(fig: go.Figure, names: List[str]):
     row_colors = ['#ebf0f8', '#ced2d9']
     bins = get_row_locations(len(names))
+    # add the alternating rows
     for i in range(len(names)):
         fig.add_shape(dict(type='rect', x0=0, x1=1, y0=bins[i][0], y1=bins[i][1],
-                      line_width=0, fillcolor=row_colors[i % 2]),
-                      row=2, col='all')
+                           line_width=0, fillcolor=row_colors[i % 2]),
+                      row=2, col=1)
+    # add white lines between them
+    for i in range(0, len(bins) - 1):
+        fig.add_shape(dict(type='line', x0=0, x1=1, y0=bins[i][0], y1=bins[i][0],
+                           line=dict(width=1, color='white')),
+                      row=2, col=1)
     fig.update_xaxes(range=[0, 1], row=2, col=1)
     fig.update_yaxes(range=[0, 1], row=2, col=1)
     # add y-axis tick labels
@@ -65,7 +71,7 @@ def vbar_shape(x_center: float, y0: float, y1: float, width: float, color: str =
     """
     x0 = x_center - 0.5 * width
     x1 = x_center + 0.5 * width
-    shape = dict(type='rect', x0=x0, x1=x1, y0=y0, y1=y1, line=None, fillcolor=color)
+    shape = dict(type='rect', x0=x0, x1=x1, y0=y0, y1=y1, line_color=color, fillcolor=color, opacity=0.6)
 
     return shape
 
@@ -85,7 +91,7 @@ def circle_shape(x_center: float, y_center: float, width: float, height: float, 
     x1 = x_center + 0.5 * width
     y0 = y_center - 0.5 * height
     y1 = y_center + 0.5 * height
-    shape = dict(type='circle', x0=x0, x1=x1, y0=y0, y1=y1, line_color=color, fillcolor=color)
+    shape = dict(type='circle', x0=x0, x1=x1, y0=y0, y1=y1, fillcolor=color, line=dict(color='#2b306e', width=1))
 
     return shape
 
@@ -118,14 +124,22 @@ def add_intersect_symbols(fig: go.Figure, intersects: List[dict], names: List[st
     shapes = []
     for i in range(n_intersects):
         samples = intersects[i]['samples']
-        x_center = col_centers[i]
-        y_locs = []
-        for sample in samples:
-            y_center = sample_location[sample]
-            y_locs.append(y_center)
+        x_center = col_centers[i]  # center of the intesect location
+        y_locs = [sample_location[sample] for sample in samples]  # location of samples in this intersect
+
+        # add bars
+        min_y = min(y_locs)
+        max_y = max(y_locs)
+        fig.add_shape(vbar_shape(x_center=x_center,
+                                 y0=min_y,
+                                 y1=max_y,
+                                 width=width*0.5),
+                      row=2, col=1)
+
+        # add circles
+        for y_loc in y_locs:
             fig.add_shape(circle_shape(x_center=x_center,
-                                       y_center=y_center,
+                                       y_center=y_loc,
                                        width=width,
                                        height=height),
                           row=2, col=1)
-        # add code to find min and max sample locations, draw a vertical bar between them
