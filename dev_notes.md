@@ -25,3 +25,10 @@ needs appropriate y-axis tick labels, which are the names of all the samples.
 them according to the original order of the input.
 
 This doesn't seem to difficult... but inevitably it will be more so than I expect.
+
+## Progress
+
+- I have finished 1-3 up there.
+- I think the sample names are getting mixed up. I am doing it all with standalone functions, and I 
+think the ordering is changed somewhere, but not preserved. I will either write a class or a function
+to encapsulate the whole thing.
