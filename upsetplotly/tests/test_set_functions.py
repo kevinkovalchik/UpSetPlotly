@@ -1,4 +1,4 @@
-from UpSetPlotly.set_functions import get_all_intersections, order_sample_intersections
+from upsetplotly.set_functions import get_all_intersections, order_sample_intersections
 
 
 def test_get_all_intersects_returns():

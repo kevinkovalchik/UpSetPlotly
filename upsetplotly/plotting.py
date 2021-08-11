@@ -1,7 +1,7 @@
 import plotly.graph_objs as go
 import plotly.subplots
 from typing import List, Dict, Tuple, Iterable, Optional
-from UpSetPlotly.set_functions import get_all_intersections
+from upsetplotly.set_functions import get_all_intersections
 
 
 class UpSetPlotly:
