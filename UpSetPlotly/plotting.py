@@ -4,7 +4,7 @@ from typing import List, Dict, Tuple, Iterable, Optional
 from UpSetPlotly.set_functions import get_all_intersections
 
 
-class UpSetPlot:
+class UpSetPlotly:
     def __init__(self, samples: List[Iterable], sample_names: List[str] = None):
 
         if sample_names:
