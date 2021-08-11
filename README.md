@@ -18,8 +18,54 @@ usp.plot()
 
 ![](.README_images/basic_upsetplot.png)
 
+The intersections can be ordered by passing `order_by={'increasing', 'decreasing'}`
+
 ```python
 usp.plot(order_by='decreasing')
 ```
 ![](.README_images/decreasing_upsetplot.png)
+
+Larger sets are okay too.
+
+```python
+import random
+
+names = [f'sample_{i}' for i in range(1, 6)]
+samples = [[''.join(random.choices('abcdefghijk', k=2)) for x in range(random.randint(1000, 3000))] for i in range(5)]
+
+usp = UpSetPlotly(samples, names)
+usp.plot()
+```
+
+![](.README_images/bigger_example.png)
+
+We can pass `intersection_limit='by_total 0.05'` to filter out any intersections which are smaller
+that 5% of the total number of unique elements. Any float between 0 and 1 is acceptable.
+
+```python
+usp.plot(order_by='increasing', intersection_limit='by_total 0.05')
+```
+
+![](.README_images/bigger_example_by_total_filter.png)
+
+Similarly, we can pass `intersection_limit='by_sample 0.05` to filter out any intersections which
+do not comprise at least 5% of any sample.
+
+```python
+usp.plot(order_by='increasing', intersection_limit='by_sample 0.05')
+```
+
+![](.README_images/bigger_example_by_sample_filtered.png)
+
+Additional data describing the elements can be passed to generate secondary plots above the 
+UpSet plot.
+
+```python
+import random
+
+all_elements = set().update([set(x) for x in samples])
+additional_data = {element: random.normalvariate(0, 1) for element in all_elements}
+usp.add_secondary_plot(data=additional_data, label='Random stuff', )
+```
+
 See [dev_notes.md](./dev_notes.md) for plans and development progress.
