@@ -28,6 +28,12 @@ This doesn't seem to difficult... but inevitably it will be more so than I expec
 
 ## Progress
 
+### 2021-08-11 (afternoon)
+- I finished all the points above. The ordering issue was because I used the same function to get row and 
+column locations.
+- I will release it on PyPI and see if I can integrate it into MhcVizPipe.
+
+### 2021-08-11 (morning)
 - I have finished 1-3 up there.
 - I think the sample names are getting mixed up. I am doing it all with standalone functions, and I 
 think the ordering is changed somewhere, but not preserved. I will either write a class or a function
