@@ -1,9 +1,21 @@
 # UpSetPlotly
 
-Generate UpSetPlot-style plots in the Plotly framework.
+Generate UpSetPlot-style plots with Plotly.
+
+## Why another UpSet package for Python?
+
+[UpSetPlot](https://github.com/jnothman/UpSetPlot) is a fine package and is well maintained. I have used it before and 
+haven't had any complaints. The reason I decided to make another package to generate 
+UpSet plots is because another project I'm working on, [MhcVizPipe](https://github.com/CaronLab/MhcVizPipe), uses 
+Plotly to generate plots as part of an HTML report. [UpSetPlot](https://github.com/jnothman/UpSetPlot) only uses 
+matplotlib. I wanted to have an UpSet plot in the reports, but I wanted it to 
+match the style and format of the other figures in the report. I also didn't want to have matplotlib as a requirement 
+when it was only being used for one of the many plots.
+
+## Usage
 
 ```shell
-pip install UpSetPlotly
+$ pip install UpSetPlotly
 ```
 
 ```python
@@ -12,7 +24,7 @@ from upsetplotly import UpSetPlotly
 samples = [[1, 2, 3, 4], [2, 3, 4], [2, 5, 6]]
 names = ["sample 1", "sample 2", "sample 3"]
 
-usp = UpSetPlotly(samples, names)
+usp = UpSetPlotly(samples=samples, sample_names=names)
 usp.plot()
 ```
 
