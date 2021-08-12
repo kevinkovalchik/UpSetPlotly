@@ -1,7 +1,21 @@
 import plotly.graph_objs as go
 import plotly.subplots
-from typing import List, Dict, Tuple, Iterable, Optional
+from typing import List, Dict, Tuple, Iterable, Optional, Union
 from upsetplotly.set_functions import get_all_intersections, order_sample_intersections
+
+
+def get_rgb_tuple(color: str) -> Tuple[int]:
+    if color.startswith('#'):
+        color = color[1:]
+        rgb_color = [int(c1 + c2, 16) for c1, c2 in zip(color[::2], color[1::2])]
+    elif color.startswith('('):
+        rgb_color = [int(x) for x in color.replace('(', '').replace(')', '').split(',')]
+    else:
+        raise ValueError(f'Unrecognized color format: {color}. Must be hex or rgb.')
+    if len(rgb_color) == 4:
+        rgb_color = rgb_color[:-1]
+    rgb_color = tuple(rgb_color)
+    return rgb_color
 
 
 class UpSetPlotly:
@@ -46,7 +60,8 @@ class UpSetPlotly:
 
     def plot(self, show_fig: bool = True, return_fig: bool = False,
              intersection_limit: str = None,
-             order_by: str = None) -> Optional[go.Figure]:
+             order_by: str = None,
+             color: str = None) -> Optional[go.Figure]:
         """
         Create the UpSetPlot.
         :param show_fig: Whether or not to show the figure.
@@ -60,6 +75,9 @@ class UpSetPlotly:
         {increasing, decreasing}
         :return:
         """
+        if color is None:
+            color = '#636efa'
+
         if order_by:
             if order_by not in ['increasing', 'decreasing']:
                 raise ValueError('order_by must be one of {increasing, decreasing}')
@@ -103,9 +121,9 @@ class UpSetPlotly:
         intersection_row = rows
         self.fig = master_figure(n_samples=len(self.sample_names),
                                  rows=rows)
-        add_intersect_bar_subplot(self.fig, intersections, row=barplot_row)
+        add_intersect_bar_subplot(self.fig, intersections, row=barplot_row, color=color)
         add_rows_to_sample_table(self.fig, self.sample_names, row=intersection_row)
-        add_circles_and_bars(self.fig, intersections, self.sample_names, row=intersection_row)
+        add_circles_and_bars(self.fig, intersections, self.sample_names, row=intersection_row, color=color)
         for i in range(len(self.additional_data)):
             data = self.additional_data[i]
             add_additional_plot(self.fig,
@@ -113,7 +131,8 @@ class UpSetPlotly:
                                 label=data['label'],
                                 intersections=intersections,
                                 plot_type=data['type'],
-                                row=i+1)
+                                row=i+1,
+                                color=color)
         self.n_plotted_intersections = len(intersections)
         if show_fig:
             self.fig.show()
@@ -147,18 +166,20 @@ def master_figure(n_samples: int, rows: int = 2) -> go.Figure:
     return fig
 
 
-def add_intersect_bar_subplot(fig: go.Figure, intersections: List[Dict], row: int = 1, col: int = 1):
+def add_intersect_bar_subplot(fig: go.Figure, intersections: List[Dict], row: int = 1, col: int = 1,
+                              color: str = '#636efa'):
     """
     Add the intersect bar chart to the master figure (i.e. a figure with 2x2 subplots).
     :param fig: The plotly.graph_object.Figure object to add the subplot to
     :param intersections: The list of intersections, a list of dictionaries.
     :param row: The row of the subplot to be added.
     :param col: The column of the subplot to be added.
+    :param color: Color of the bars
     :return:
     """
     numbers = [x['n'] for x in intersections]
     labels = [' & '.join(x['samples']) for x in intersections]
-    fig.add_trace(go.Bar(x=labels, y=numbers), row=row, col=col)
+    fig.add_trace(go.Bar(x=labels, y=numbers, marker=dict(color=color)), row=row, col=col)
 
 
 def get_row_locations(n: int) -> List[Tuple[float, float]]:
@@ -223,6 +244,8 @@ def vbar_shape(x_center: float, y0: float, y1: float, width: float, color: str =
     :param color:
     :return:
     """
+    color = get_rgb_tuple(color)
+    color = f'rgb{color}'
     x0 = x_center - 0.5 * width
     x1 = x_center + 0.5 * width
     shape = dict(type='rect', x0=x0, x1=x1, y0=y0, y1=y1, line_color=color, fillcolor=color, opacity=0.6)
@@ -241,16 +264,21 @@ def circle_shape(x_center: float, y_center: float, width: float, height: float, 
     :param color:
     :return:
     """
+    color = get_rgb_tuple(color)
+    fillcolor = f'rgb{color}'
+    linecolor = [x-50 if x-50 >= 0 else 0 for x in color]
+    linecolor = f'rgb{tuple(linecolor)}'
     x0 = x_center - 0.5 * width
     x1 = x_center + 0.5 * width
     y0 = y_center - 0.5 * height
     y1 = y_center + 0.5 * height
-    shape = dict(type='circle', x0=x0, x1=x1, y0=y0, y1=y1, fillcolor=color, line=dict(color='#2b306e', width=1))
+    shape = dict(type='circle', x0=x0, x1=x1, y0=y0, y1=y1, fillcolor=fillcolor, line=dict(color=linecolor, width=1))
 
     return shape
 
 
-def add_circles_and_bars(fig: go.Figure, intersections: List[dict], names: List[str], row: int = 2, col: int = 1):
+def add_circles_and_bars(fig: go.Figure, intersections: List[dict], names: List[str], row: int = 2, col: int = 1,
+                         color:str = '#636efa'):
     """
     Add circles and bars indicating the samples to which a set belongs.
     :param fig: The figure being modified.
@@ -289,7 +317,8 @@ def add_circles_and_bars(fig: go.Figure, intersections: List[dict], names: List[
         fig.add_shape(vbar_shape(x_center=x_center,
                                  y0=min_y,
                                  y1=max_y,
-                                 width=width*0.5),
+                                 width=width*0.5,
+                                 color=color),
                       row=row, col=col)
 
         # add circles
@@ -297,12 +326,13 @@ def add_circles_and_bars(fig: go.Figure, intersections: List[dict], names: List[
             fig.add_shape(circle_shape(x_center=x_center,
                                        y_center=y_loc,
                                        width=width,
-                                       height=height),
+                                       height=height,
+                                       color=color),
                           row=row, col=col)
 
 
 def add_additional_plot(fig: go.Figure, data: dict, label: str, intersections: List[Dict],
-                        plot_type: str = 'box', row: int = 2, col: int = 1):
+                        plot_type: str = 'box', row: int = 2, col: int = 1, color:str = '#636efa'):
     """
     Add an additional plot to the UpSetPlot.
     :param fig: The figure being modified.
@@ -330,15 +360,16 @@ def add_additional_plot(fig: go.Figure, data: dict, label: str, intersections: L
             fig.add_trace(go.Box(x=[x_loc]*len(data_to_plot),
                                  y=data_to_plot,
                                  width=box_width,
-                                 fillcolor='rgba(99,110,250,0.6)',
-                                 line=dict(color='#565fdb', width=1.5)
+                                 marker=dict(color=color),
+                                 line=dict(color=color, width=1.5)
                                  ),
                           row=row, col=col)
         elif plot_type == 'violin':
             fig.add_trace(go.Violin(x=[x_loc]*len(data_to_plot),
                                     y=data_to_plot,
-                                    fillcolor='rgba(99,110,250,0.6)',
-                                    line=dict(color='#565fdb', width=1.5)
+                                    fillcolor=color,
+                                    opacity=0.6,
+                                    line=dict(color=color, width=1.5)
                                     ),
                           row=row, col=col)
         else:
@@ -346,7 +377,7 @@ def add_additional_plot(fig: go.Figure, data: dict, label: str, intersections: L
                                  y=data_to_plot,
                                  fillcolor='rgba(255,255,255,0)',
                                  line={'color': 'rgba(255,255,255,0)'},
-                                 marker={'color': '#565fdb', 'size': 4},
+                                 marker={'color': color, 'size': 4},
                                  boxpoints='all',
                                  jitter=0.6,
                                  pointpos=0),
