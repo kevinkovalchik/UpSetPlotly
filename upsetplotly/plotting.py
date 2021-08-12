@@ -19,6 +19,7 @@ class UpSetPlotly:
         self.sample_data = {sample: data for sample, data in zip(sample_names, samples)}
         self.intersections = get_all_intersections(self.samples, self.sample_names)
         self.intersections = [x for x in self.intersections if x['n'] > 0]  # drop any empty intersections
+        self.n_plotted_intersections: int = 0
         self.all_elements = set()
         self.all_elements.update(*self.samples)
         self.n_rows = 2
@@ -113,6 +114,7 @@ class UpSetPlotly:
                                 intersections=intersections,
                                 plot_type=data['type'],
                                 row=i+1)
+        self.n_plotted_intersections = len(intersections)
         if show_fig:
             self.fig.show()
         if return_fig:
