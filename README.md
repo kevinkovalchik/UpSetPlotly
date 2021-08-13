@@ -95,4 +95,14 @@ usp.plot()
 
 ![](.README_images/w_all_secondary_plots.png)
 
-See [dev_notes.md](./dev_notes.md) for plans and development progress.
+Finally, you can change the color scheme (a bit). By passing the `color` argument to 
+`UpSetPlotly.plot`, you set the base color for the image. Unfortunately you have to pass
+in either HEX values or an RGB string (e.g. `'rgb(..., ..., ...)'`)
+
+```python
+usp.plot(color='#fcba03')
+usp.plot(color='rgb(212, 87, 185)')
+```
+
+![](.README_images/colored_example.png)
+![](.README_images/another_colored_example.png)
