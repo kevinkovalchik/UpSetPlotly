@@ -10,6 +10,8 @@ def get_rgb_tuple(color: str) -> Tuple[int]:
         rgb_color = [int(c1 + c2, 16) for c1, c2 in zip(color[::2], color[1::2])]
     elif color.startswith('('):
         rgb_color = [int(x) for x in color.replace('(', '').replace(')', '').split(',')]
+    elif color.startswith('rgb'):
+        rgb_color = [int(x) for x in color.replace('rgb', '').replace('(', '').replace(')', '').split(',')]
     else:
         raise ValueError(f'Unrecognized color format: {color}. Must be hex or rgb.')
     if len(rgb_color) == 4:
@@ -176,6 +178,8 @@ def add_intersect_bar_subplot(fig: go.Figure, intersections: List[Dict], row: in
     :param color: Color of the bars
     :return:
     """
+    color = get_rgb_tuple(color)
+    color = f'rgb{color}'
     numbers = [x['n'] for x in intersections]
     labels = [' & '.join(x['samples']) for x in intersections]
     fig.add_trace(go.Bar(x=labels, y=numbers, marker=dict(color=color)), row=row, col=col)
@@ -343,6 +347,10 @@ def add_additional_plot(fig: go.Figure, data: dict, label: str, intersections: L
     :param col: The column of the subplot to be modified.
     :return: None
     """
+
+    color = get_rgb_tuple(color)
+    color = f'rgb{color}'
+
     if plot_type not in ['box', 'violin', 'swarm']:
         raise ValueError('plot_type must be one of {box, violin, swarm}')
     n_intersections = len(intersections)
