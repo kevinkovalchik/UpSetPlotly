@@ -366,8 +366,9 @@ def add_additional_plot(fig: go.Figure, data: dict, label: str, intersections: L
         elif plot_type == 'violin':
             fig.add_trace(go.Violin(x=[x_loc]*len(data_to_plot),
                                     y=data_to_plot,
-                                    fillcolor=color,
-                                    opacity=0.6,
+                                    #fillcolor=color,
+                                    #opacity=0.6,
+                                    marker=dict(color=color),
                                     line=dict(color=color, width=1.5)
                                     ),
                           row=row, col=col)
