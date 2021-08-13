@@ -152,9 +152,8 @@ def master_figure(n_samples: int, rows: int = 2) -> go.Figure:
     row_heights.append(10)
     row_heights.append(1 * n_samples)
     row_heights = [x/len(row_heights) for x in row_heights]
-    fig = plotly.subplots.make_subplots(rows, 1, vertical_spacing=0.015,
-                                        row_heights=row_heights,
-                                        shared_xaxes=True)
+    fig = plotly.subplots.make_subplots(rows, 1, True, True, vertical_spacing=0.015,
+                                        row_heights=row_heights)
     fig.update_xaxes(ticks='', row=rows, col=1, tickvals=[], ticktext=[])
     fig.update_yaxes(title_text='Intersection Size', row=rows-1, col=1)
     fig.update_layout(showlegend=False)
