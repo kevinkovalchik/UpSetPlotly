@@ -1,2 +1,3 @@
 plotly
 nose2
+tqdm
