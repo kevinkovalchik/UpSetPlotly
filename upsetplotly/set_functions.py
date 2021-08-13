@@ -35,10 +35,13 @@ def get_all_intersections(samples: Union[List[List], List[Set]], names: List[str
     compliment_sets = []
     for intersect in possible_intersects:
         compliment_sets.append(tuple(names_set - set(intersect)))  # as a tuple to be consistent
-
+    if len(possible_intersects) > 10000:
+        disable_tqdm = False
+    else:
+        disable_tqdm = True
     # and now get the actual intersections
     intersects = []
-    for intersect in tqdm(possible_intersects, desc='Calculating possible intersections'):
+    for intersect in tqdm(possible_intersects, desc='Calculating possible intersections', disable=disable_tqdm):
         intersect = list(intersect)
         intersect.sort(key=lambda x: len(sets[x]))
         S = copy(sets[intersect[0]])
@@ -47,7 +50,7 @@ def get_all_intersections(samples: Union[List[List], List[Set]], names: List[str
         intersects.append(S)
 
     # remove any elements found in the compliment sets
-    for i in tqdm(range(len(intersects)), desc='Removing elements found in complimentary sets'):
+    for i in tqdm(range(len(intersects)), desc='Removing elements found in complimentary sets', disable=disable_tqdm):
         intersect = copy(intersects[i])
         compliment = compliment_sets[i]
         for c_s in compliment:
