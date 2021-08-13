@@ -1,5 +1,7 @@
 from typing import List, Set, Union, Dict
 import itertools
+from copy import copy
+from tqdm import tqdm
 
 
 def get_all_intersections(samples: Union[List[List], List[Set]], names: List[str] = None) -> List[Dict]:
@@ -18,6 +20,7 @@ def get_all_intersections(samples: Union[List[List], List[Set]], names: List[str
     else:
         # if there are no names provided, use sequential integers starting at 1
         names = [str(x) for x in range(1, len(samples) + 1)]
+    names_set = set(names)
 
     # put the samples in a dictionary, making sure everything is sets
     sets = {name: set(x) for name, x in zip(names, samples)}
@@ -26,23 +29,26 @@ def get_all_intersections(samples: Union[List[List], List[Set]], names: List[str
     possible_intersects = []
     for i in range(1, len(samples) + 1):
         possible_intersects += list(itertools.combinations(names, i))
+    #possible_intersects = [list(x) for x in possible_intersects]
 
     # now get a list that is the compliment, i.e. the samples not in each possible combination
     compliment_sets = []
     for intersect in possible_intersects:
-        compliment_sets.append(tuple([x for x in names if x not in intersect]))  # as a tuple to be consistent
+        compliment_sets.append(tuple(names_set - set(intersect)))  # as a tuple to be consistent
 
     # and now get the actual intersections
     intersects = []
-    for intersect in possible_intersects:
-        S = sets[intersect[0]]
-        for name in intersect:
-            S = S & sets[name]
+    for intersect in tqdm(possible_intersects, desc='Calculating possible intersections'):
+        intersect = list(intersect)
+        intersect.sort(key=lambda x: len(sets[x]))
+        S = copy(sets[intersect[0]])
+        for name in intersect[1:]:
+            S &= sets[name]
         intersects.append(S)
 
     # remove any elements found in the compliment sets
-    for i in range(len(intersects)):
-        intersect = intersects[i]
+    for i in tqdm(range(len(intersects)), desc='Removing elements found in complimentary sets'):
+        intersect = copy(intersects[i])
         compliment = compliment_sets[i]
         for c_s in compliment:
             intersect = intersect - sets[c_s]
