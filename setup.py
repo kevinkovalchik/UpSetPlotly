@@ -8,8 +8,8 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 # replace relative paths to images with web links
-long_description.replace('.README_images',
-                         'https://raw.githubusercontent.com/kevinkovalchik/UpSetPlotly/master/.README_images')
+long_description = long_description.replace('.README_images',
+    'https://raw.githubusercontent.com/kevinkovalchik/UpSetPlotly/master/.README_images')
 
 # good to go!
 
