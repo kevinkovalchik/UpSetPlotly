@@ -21,7 +21,7 @@ setup(
     license='MIT',
     author='Kevin Kovalchik',
     author_email='',
-    install_requires=['plotly'],
+    install_requires=['plotly', 'tqdm'],
     description='A Python package for creating UpSet-style plots using the Plotly framework.',
     long_description=long_description,
     long_description_content_type='text/markdown'
