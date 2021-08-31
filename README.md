@@ -2,7 +2,7 @@
 
 Generate UpSetPlot-style plots with Plotly.
 
-![](.README_images/w_all_secondary_plots.png)
+<img src=".README_images/w_all_secondary_plots.png" width="600" />
 
 ## Contents
 
