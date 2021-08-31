@@ -2,6 +2,28 @@
 
 Generate UpSetPlot-style plots with Plotly.
 
+![](.README_images/w_all_secondary_plots.png)
+
+## Contents
+
+- [What is an UpSet plot?](#what-is)
+- [Why another UpSet package for Python?](#why-another)
+- [Usage](#usage)
+- [How to cite](#how-to-cite)
+
+<a id="what-is"></a>
+
+## What is an upset plot?
+
+An UpSet plot is a means of visualizing intersecting sets. For detailed information, 
+[follow this link](https://jku-vds-lab.at/tools/upset/). The [original UpSet](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4720993/) 
+plot is quite the tool, with an enormous amount of flexibility and the ability to visualize many, many aspects of 
+a dataset. My particular needs are much more modest, and I am usually only interested in the core of the figure 
+and possibly one or two secondary plots describing the intersections. There are tools that do this [in R](https://github.com/hms-dbmi/UpSetR)
+and [in Python](https://github.com/jnothman/UpSetPlot). So why another one? That leads nicely into the next section...
+
+<a id="why-another"></a>
+
 ## Why another UpSet package for Python?
 
 [UpSetPlot](https://github.com/jnothman/UpSetPlot) is a fine package and is well maintained. I have used it before and 
@@ -11,6 +33,8 @@ Plotly to generate plots as part of an HTML report. [UpSetPlot](https://github.c
 matplotlib. I wanted to have an UpSet plot in the reports, but I wanted it to 
 match the style and format of the other figures in the report. I also didn't want to have matplotlib as a requirement 
 when it was only being used for one of the many plots.
+
+<a id="usage"></a>
 
 ## Usage
 
@@ -106,3 +130,15 @@ usp.plot(color='rgb(212, 87, 185)')
 
 ![](.README_images/colored_example.png)
 ![](.README_images/another_colored_example.png)
+
+<a id="how-to-cite"></a>
+
+## How to cite
+
+If you find UpSetPlotly useful, please acknowledge our work and the work of others with the following citations:
+
+- Kovalchik, K. A., Wessling, L., Saab, F., Ma, Q., Despault, J., Kubiniok, P., Hameline, D., Faridi, P., Li, C., Purcell, A., Tognetti, M., Reiter,
+L., Bruderer, R., Lanoix, J., Bonneil, E., Courcelles, M., Thibault, P., Caron, E., Sirois, I. MhcVizPipe: A Quality Control Software for Ultra-
+Rapid Assessment of Mass Spectrometry-based Immunopeptidomics Data. Molecular and Cellular Proteomics (in revision).
+- Lex, A., Gehlenborg, N., Strobelt, H., Vuillemot, R., & Pfister, H. (2014). UpSet: Visualization of Intersecting 
+Sets. IEEE transactions on visualization and computer graphics, 20(12), 1983–1992. https://doi.org/10.1109/TVCG.2014.2346248
